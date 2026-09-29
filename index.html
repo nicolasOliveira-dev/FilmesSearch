@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FilmesSearch - Pesquisa e Acervo de Filmes</title>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Background Overlay -->
+    <div class="background-grid-overlay">
+        <div class="dark-gradient-cover"></div>
+    </div>
+
+    <!-- Header Navigation -->
+    <header class="header">
+        <div class="container header-content">
+            <a href="#" class="brand-logo">
+                <div class="logo-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="2" y="2" width="20" height="20" rx="5" stroke="currentColor" stroke-width="2.5"/>
+                        <polygon points="10,8 16,12 10,16" fill="currentColor"/>
+                    </svg>
+                </div>
+                <span class="brand-name">Filmes<span class="highlight">Search</span></span>
+            </a>
+
+            <!-- Toggle Acervo Button -->
+            <button id="toggleCatalogBtn" class="btn-acervo-toggle">
+                <i class="fa-solid fa-film"></i>
+                <span>Ver Acervo</span>
+                <span id="navMovieCountBadge" class="nav-count-badge">0</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="main-content container">
+        <!-- Search & Filter Section -->
+        <section class="search-section">
+            <div class="search-box-group">
+                <!-- Text Search Input -->
+                <div class="search-input-wrapper">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input 
+                        type="text" 
+                        id="searchInput" 
+                        placeholder="Pesquisar por nome do filme ou gênero..." 
+                        autocomplete="off"
+                    >
+                    <button type="button" id="clearSearchBtn" class="clear-btn hidden" title="Limpar pesquisa">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <!-- Genre Filter Dropdown -->
+                <div class="search-genre-wrapper">
+                    <select id="searchGenreFilter">
+                        <option value="">Todos os Gêneros</option>
+                        <option value="Ação">Ação</option>
+                        <option value="Animação">Animação</option>
+                        <option value="Aventura">Aventura</option>
+                        <option value="Comédia">Comédia</option>
+                        <option value="Documentário">Documentário</option>
+                        <option value="Drama">Drama</option>
+                        <option value="Ficção Científica">Ficção Científica</option>
+                        <option value="Fantasia">Fantasia</option>
+                        <option value="Romance">Romance</option>
+                        <option value="Suspense">Suspense</option>
+                        <option value="Terror">Terror</option>
+                    </select>
+                    <i class="fa-solid fa-chevron-down select-icon"></i>
+                </div>
+            </div>
+        </section>
+
+        <!-- Form Heading & Card Section -->
+        <section class="collaborate-section">
+            <h1 class="section-title">Não encontrou? Colabore com o acervo.</h1>
+            
+            <div class="form-card">
+                <div class="card-gold-bar"></div>
+                <form id="addMovieForm" class="movie-form">
+                    <div class="form-grid">
+                        <!-- Nome do Filme -->
+                        <div class="form-group">
+                            <label for="movieName">Nome do Filme</label>
+                            <input 
+                                type="text" 
+                                id="movieName" 
+                                name="nome" 
+                                placeholder="Digite o nome do filme..." 
+                                required
+                            >
+                        </div>
+
+                        <!-- Gênero -->
+                        <div class="form-group">
+                            <label for="movieGenre">Gênero</label>
+                            <div class="select-wrapper">
+                                <select id="movieGenre" name="genero" required>
+                                    <option value="" disabled selected>Selecione (ex: Ação, Drama, Comédia)</option>
+                                    <option value="Ação">Ação</option>
+                                    <option value="Animação">Animação</option>
+                                    <option value="Aventura">Aventura</option>
+                                    <option value="Comédia">Comédia</option>
+                                    <option value="Documentário">Documentário</option>
+                                    <option value="Drama">Drama</option>
+                                    <option value="Ficção Científica">Ficção Científica</option>
+                                    <option value="Fantasia">Fantasia</option>
+                                    <option value="Romance">Romance</option>
+                                    <option value="Suspense">Suspense</option>
+                                    <option value="Terror">Terror</option>
+                                </select>
+                                <i class="fa-solid fa-chevron-down select-icon"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="form-actions">
+                        <button type="submit" class="btn-submit">
+                            <span>Cadastrar Filme</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- Movie Catalog Results Grid (Only visible on click or search) -->
+        <section class="catalog-section hidden" id="catalogSection">
+            <div class="catalog-header">
+                <h2>Filmes Cadastrados no Acervo <span id="movieCountBadge" class="count-badge">0</span></h2>
+                <button id="closeCatalogBtn" class="close-catalog-btn" title="Fechar acervo">
+                    <i class="fa-solid fa-xmark"></i> Fechar
+                </button>
+            </div>
+
+            <!-- List without images -->
+            <div class="movie-list" id="movieList">
+                <!-- Text-only movie cards rendered dynamically -->
+            </div>
+
+            <div id="noResults" class="no-results hidden">
+                <i class="fa-solid fa-film"></i>
+                <p id="noResultsText">Nenhum filme cadastrado ainda. Utilize o formulário acima para cadastrar!</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast hidden">
+        <i class="toast-icon fa-solid fa-circle-check"></i>
+        <span id="toastMessage">Filme cadastrado com sucesso!</span>
+    </div>
+
+    <!-- Script -->
+    <script src="script.js"></script>
+</body>
+</html>
