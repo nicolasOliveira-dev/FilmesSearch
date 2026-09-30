@@ -1,13 +1,13 @@
-package com.example.FilmeSearch;
+package com.example.CountrySearch;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class FilmeSearchApplication {
+public class CountrySearchApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(FilmeSearchApplication.class, args);
+		SpringApplication.run(CountrySearchApplication.class, args);
 	}
 
 }

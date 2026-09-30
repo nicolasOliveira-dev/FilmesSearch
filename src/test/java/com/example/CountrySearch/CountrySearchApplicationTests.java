@@ -1,10 +1,10 @@
-package com.example.FilmeSearch;
+package com.example.CountrySearch;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class FilmeSearchApplicationTests {
+class CountrySearchApplicationTests {
 
 	@Test
 	void contextLoads() {

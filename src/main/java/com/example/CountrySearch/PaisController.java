@@ -1,4 +1,4 @@
-package com.example.FilmeSearch;
+package com.example.CountrySearch;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -7,27 +7,27 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/filmes")
+@RequestMapping("/api/paises")
 @CrossOrigin(origins = "*")
-public class FilmeController {
+public class PaisController {
 
     @Autowired
-    private FilmeRepository filmeRepository;
+    private PaisRepository paisRepository;
 
     @GetMapping
-    public List<Filme> listarTodos() {
-        return filmeRepository.findAll();
+    public List<Pais> listarTodos() {
+        return paisRepository.findAll();
     }
 
     @PostMapping
-    public Filme cadastrar(@RequestBody Filme filme) {
-        return filmeRepository.save(filme);
+    public Pais cadastrar(@RequestBody Pais pais) {
+        return paisRepository.save(pais);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletar(@PathVariable Integer id) {
-        if (filmeRepository.existsById(id)) {
-            filmeRepository.deleteById(id);
+        if (paisRepository.existsById(id)) {
+            paisRepository.deleteById(id);
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FilmesSearch - Pesquisa e Acervo de Filmes</title>
+    <title>PaísesSearch - Pesquisa e Cadastro de Países</title>
     <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,19 +23,16 @@
         <div class="container header-content">
             <a href="#" class="brand-logo">
                 <div class="logo-icon">
-                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect x="2" y="2" width="20" height="20" rx="5" stroke="currentColor" stroke-width="2.5"/>
-                        <polygon points="10,8 16,12 10,16" fill="currentColor"/>
-                    </svg>
+                    <i class="fa-solid fa-earth-americas"></i>
                 </div>
-                <span class="brand-name">Filmes<span class="highlight">Search</span></span>
+                <span class="brand-name">Países<span class="highlight">Search</span></span>
             </a>
 
             <!-- Toggle Acervo Button -->
             <button id="toggleCatalogBtn" class="btn-acervo-toggle">
-                <i class="fa-solid fa-film"></i>
-                <span>Ver Acervo</span>
-                <span id="navMovieCountBadge" class="nav-count-badge">0</span>
+                <i class="fa-solid fa-globe"></i>
+                <span>Ver Países Cadastrados</span>
+                <span id="navCountryCountBadge" class="nav-count-badge">0</span>
             </button>
         </div>
     </header>
@@ -51,7 +48,7 @@
                     <input 
                         type="text" 
                         id="searchInput" 
-                        placeholder="Pesquisar por nome do filme ou gênero..." 
+                        placeholder="Pesquisar por nome do país ou capital..." 
                         autocomplete="off"
                     >
                     <button type="button" id="clearSearchBtn" class="clear-btn hidden" title="Limpar pesquisa">
@@ -59,21 +56,17 @@
                     </button>
                 </div>
 
-                <!-- Genre Filter Dropdown -->
+                <!-- Continent Filter Dropdown -->
                 <div class="search-genre-wrapper">
-                    <select id="searchGenreFilter">
-                        <option value="">Todos os Gêneros</option>
-                        <option value="Ação">Ação</option>
-                        <option value="Animação">Animação</option>
-                        <option value="Aventura">Aventura</option>
-                        <option value="Comédia">Comédia</option>
-                        <option value="Documentário">Documentário</option>
-                        <option value="Drama">Drama</option>
-                        <option value="Ficção Científica">Ficção Científica</option>
-                        <option value="Fantasia">Fantasia</option>
-                        <option value="Romance">Romance</option>
-                        <option value="Suspense">Suspense</option>
-                        <option value="Terror">Terror</option>
+                    <select id="searchContinentFilter">
+                        <option value="">Todos os Continentes</option>
+                        <option value="África">África</option>
+                        <option value="América do Norte">América do Norte</option>
+                        <option value="América do Sul">América do Sul</option>
+                        <option value="Antártida">Antártida</option>
+                        <option value="Ásia">Ásia</option>
+                        <option value="Europa">Europa</option>
+                        <option value="Oceania">Oceania</option>
                     </select>
                     <i class="fa-solid fa-chevron-down select-icon"></i>
                 </div>
@@ -82,74 +75,96 @@
 
         <!-- Form Heading & Card Section -->
         <section class="collaborate-section">
-            <h1 class="section-title">Não encontrou? Colabore com o acervo.</h1>
+            <h1 class="section-title">Cadastre e Pesquise Países pelo Mundo</h1>
+            <p class="section-subtitle">Adicione novos países ao acervo informando o continente, a capital e a população estimada.</p>
             
             <div class="form-card">
-                <div class="card-gold-bar"></div>
-                <form id="addMovieForm" class="movie-form">
+                <div class="card-accent-bar"></div>
+                <form id="addCountryForm" class="country-form">
                     <div class="form-grid">
-                        <!-- Nome do Filme -->
+                        <!-- Nome do País -->
                         <div class="form-group">
-                            <label for="movieName">Nome do Filme</label>
+                            <label for="countryName"><i class="fa-solid fa-flag"></i> Nome do País</label>
                             <input 
                                 type="text" 
-                                id="movieName" 
+                                id="countryName" 
                                 name="nome" 
-                                placeholder="Digite o nome do filme..." 
+                                placeholder="Digite o nome do país (ex: Brasil, Japão)..." 
                                 required
                             >
                         </div>
 
-                        <!-- Gênero -->
+                        <!-- Continente -->
                         <div class="form-group">
-                            <label for="movieGenre">Gênero</label>
+                            <label for="countryContinent"><i class="fa-solid fa-compass"></i> Continente</label>
                             <div class="select-wrapper">
-                                <select id="movieGenre" name="genero" required>
-                                    <option value="" disabled selected>Selecione (ex: Ação, Drama, Comédia)</option>
-                                    <option value="Ação">Ação</option>
-                                    <option value="Animação">Animação</option>
-                                    <option value="Aventura">Aventura</option>
-                                    <option value="Comédia">Comédia</option>
-                                    <option value="Documentário">Documentário</option>
-                                    <option value="Drama">Drama</option>
-                                    <option value="Ficção Científica">Ficção Científica</option>
-                                    <option value="Fantasia">Fantasia</option>
-                                    <option value="Romance">Romance</option>
-                                    <option value="Suspense">Suspense</option>
-                                    <option value="Terror">Terror</option>
+                                <select id="countryContinent" name="continente" required>
+                                    <option value="" disabled selected>Selecione um continente</option>
+                                    <option value="África">África</option>
+                                    <option value="América do Norte">América do Norte</option>
+                                    <option value="América do Sul">América do Sul</option>
+                                    <option value="Antártida">Antártida</option>
+                                    <option value="Ásia">Ásia</option>
+                                    <option value="Europa">Europa</option>
+                                    <option value="Oceania">Oceania</option>
                                 </select>
                                 <i class="fa-solid fa-chevron-down select-icon"></i>
                             </div>
+                        </div>
+
+                        <!-- Capital -->
+                        <div class="form-group">
+                            <label for="countryCapital"><i class="fa-solid fa-building-columns"></i> Capital</label>
+                            <input 
+                                type="text" 
+                                id="countryCapital" 
+                                name="capital" 
+                                placeholder="Digite a capital (ex: Brasília, Tóquio)..." 
+                                required
+                            >
+                        </div>
+
+                        <!-- População Estimada -->
+                        <div class="form-group">
+                            <label for="countryPopulation"><i class="fa-solid fa-users"></i> População Estimada</label>
+                            <input 
+                                type="text" 
+                                id="countryPopulation" 
+                                name="populacao" 
+                                placeholder="Ex: 214 milhões ou 214.000.000" 
+                                required
+                            >
                         </div>
                     </div>
 
                     <!-- Submit Button -->
                     <div class="form-actions">
                         <button type="submit" class="btn-submit">
-                            <span>Cadastrar Filme</span>
+                            <i class="fa-solid fa-plus"></i>
+                            <span>Cadastrar País</span>
                         </button>
                     </div>
                 </form>
             </div>
         </section>
 
-        <!-- Movie Catalog Results Grid (Only visible on click or search) -->
+        <!-- Country Catalog Results Grid (Visible on click or search) -->
         <section class="catalog-section hidden" id="catalogSection">
             <div class="catalog-header">
-                <h2>Filmes Cadastrados no Acervo <span id="movieCountBadge" class="count-badge">0</span></h2>
+                <h2>Países Cadastrados no Acervo <span id="countryCountBadge" class="count-badge">0</span></h2>
                 <button id="closeCatalogBtn" class="close-catalog-btn" title="Fechar acervo">
                     <i class="fa-solid fa-xmark"></i> Fechar
                 </button>
             </div>
 
-            <!-- List without images -->
-            <div class="movie-list" id="movieList">
-                <!-- Text-only movie cards rendered dynamically -->
+            <!-- List of Country Cards -->
+            <div class="country-list" id="countryList">
+                <!-- Country cards rendered dynamically -->
             </div>
 
             <div id="noResults" class="no-results hidden">
-                <i class="fa-solid fa-film"></i>
-                <p id="noResultsText">Nenhum filme cadastrado ainda. Utilize o formulário acima para cadastrar!</p>
+                <i class="fa-solid fa-earth-americas"></i>
+                <p id="noResultsText">Nenhum país cadastrado ainda. Utilize o formulário acima para cadastrar!</p>
             </div>
         </section>
     </main>
@@ -157,7 +172,7 @@
     <!-- Toast Notification -->
     <div id="toast" class="toast hidden">
         <i class="toast-icon fa-solid fa-circle-check"></i>
-        <span id="toastMessage">Filme cadastrado com sucesso!</span>
+        <span id="toastMessage">País cadastrado com sucesso!</span>
     </div>
 
     <!-- Script -->

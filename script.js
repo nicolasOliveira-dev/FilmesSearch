@@ -1,25 +1,28 @@
 /* ==========================================================================
-   FilmesSearch - Dynamic Application Logic (Database Integration)
+   PaísesSearch - Dynamic Application Logic (API & Database Integration)
    ========================================================================== */
 
 document.addEventListener('DOMContentLoaded', () => {
-    // App State: loaded directly from the database endpoint
-    let movies = [];
+    // App State
+    let countries = [];
     let isCatalogVisible = false;
     let searchQuery = '';
-    let selectedGenreFilter = '';
+    let selectedContinentFilter = '';
 
     // DOM Elements
     const searchInput = document.getElementById('searchInput');
     const clearSearchBtn = document.getElementById('clearSearchBtn');
-    const searchGenreFilter = document.getElementById('searchGenreFilter');
-    const addMovieForm = document.getElementById('addMovieForm');
-    const movieNameInput = document.getElementById('movieName');
-    const movieGenreSelect = document.getElementById('movieGenre');
+    const searchContinentFilter = document.getElementById('searchContinentFilter');
+    const addCountryForm = document.getElementById('addCountryForm');
+    const countryNameInput = document.getElementById('countryName');
+    const countryContinentSelect = document.getElementById('countryContinent');
+    const countryCapitalInput = document.getElementById('countryCapital');
+    const countryPopulationInput = document.getElementById('countryPopulation');
+    
     const catalogSection = document.getElementById('catalogSection');
-    const movieList = document.getElementById('movieList');
-    const movieCountBadge = document.getElementById('movieCountBadge');
-    const navMovieCountBadge = document.getElementById('navMovieCountBadge');
+    const countryList = document.getElementById('countryList');
+    const countryCountBadge = document.getElementById('countryCountBadge');
+    const navCountryCountBadge = document.getElementById('navCountryCountBadge');
     const toggleCatalogBtn = document.getElementById('toggleCatalogBtn');
     const closeCatalogBtn = document.getElementById('closeCatalogBtn');
     const noResults = document.getElementById('noResults');
@@ -27,8 +30,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const toast = document.getElementById('toast');
     const toastMessage = document.getElementById('toastMessage');
 
-    // Initialize Page by loading movies from the database
-    carregarFilmesDoBanco();
+    // Initialize Page by loading countries from the backend API
+    carregarPaisesDoBanco();
 
     // ----------------------------------------------------------------------
     // Event Listeners
@@ -46,13 +49,13 @@ document.addEventListener('DOMContentLoaded', () => {
         setCatalogVisibility(false);
     });
 
-    // Search Input (Text search by name or genre)
+    // Search Input (Text search by name or capital)
     searchInput.addEventListener('input', (e) => {
         searchQuery = e.target.value.toLowerCase().trim();
         clearSearchBtn.classList.toggle('hidden', searchQuery === '');
 
         // Auto-open catalog when user searches
-        if (searchQuery !== '' || selectedGenreFilter !== '') {
+        if (searchQuery !== '' || selectedContinentFilter !== '') {
             setCatalogVisibility(true);
         }
         renderCatalog();
@@ -67,46 +70,53 @@ document.addEventListener('DOMContentLoaded', () => {
         renderCatalog();
     });
 
-    // Genre Filter Select Dropdown
-    searchGenreFilter.addEventListener('change', (e) => {
-        selectedGenreFilter = e.target.value;
+    // Continent Filter Select Dropdown
+    searchContinentFilter.addEventListener('change', (e) => {
+        selectedContinentFilter = e.target.value;
 
-        // Auto-open catalog when a genre is selected
-        if (selectedGenreFilter !== '' || searchQuery !== '') {
+        // Auto-open catalog when a continent is selected
+        if (selectedContinentFilter !== '' || searchQuery !== '') {
             setCatalogVisibility(true);
         }
         renderCatalog();
     });
 
-    // Form Submit - Add Movie to Database
-    addMovieForm.addEventListener('submit', async (e) => {
+    // Form Submit - Add Country to Database
+    addCountryForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        const nome = movieNameInput.value.trim();
-        const genero = movieGenreSelect.value;
+        const nome = countryNameInput.value.trim();
+        const continente = countryContinentSelect.value;
+        const capital = countryCapitalInput.value.trim();
+        const populacao = countryPopulationInput.value.trim();
 
-        if (!nome || !genero) {
-            showToast('Por favor, preencha todos os campos.', 'error');
+        if (!nome || !continente || !capital || !populacao) {
+            showToast('Por favor, preencha todos os campos do país.', 'error');
             return;
         }
 
         try {
-            const response = await fetch('/api/filmes', {
+            const response = await fetch('/api/paises', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ nome: nome, genero: genero })
+                body: JSON.stringify({ 
+                    nome: nome, 
+                    continente: continente,
+                    capital: capital,
+                    populacao: populacao 
+                })
             });
 
             if (response.ok) {
-                addMovieForm.reset();
-                await carregarFilmesDoBanco();
+                addCountryForm.reset();
+                await carregarPaisesDoBanco();
                 setCatalogVisibility(true);
-                showToast(`Filme "${nome}" cadastrado com sucesso no banco de dados!`);
+                showToast(`País "${nome}" cadastrado com sucesso!`);
             } else {
-                showToast('Erro ao salvar o filme no banco de dados.', 'error');
+                showToast('Erro ao salvar o país no banco de dados.', 'error');
             }
         } catch (err) {
-            showToast('Falha de conexão com o banco de dados.', 'error');
+            showToast('Falha de conexão com o servidor.', 'error');
         }
     });
 
@@ -114,20 +124,20 @@ document.addEventListener('DOMContentLoaded', () => {
     // Core Logic Functions
     // ----------------------------------------------------------------------
 
-    async function carregarFilmesDoBanco() {
+    async function carregarPaisesDoBanco() {
         try {
-            const response = await fetch('/api/filmes');
+            const response = await fetch('/api/paises');
             if (response.ok) {
                 const data = await response.json();
                 if (Array.isArray(data)) {
-                    movies = data;
+                    countries = data;
                     updateBadgeCount();
                     if (isCatalogVisible) {
                         renderCatalog();
                     }
                 }
             } else {
-                showToast('Erro ao carregar filmes do banco de dados.', 'error');
+                showToast('Erro ao carregar países do banco de dados.', 'error');
             }
         } catch (err) {
             showToast('Não foi possível conectar ao banco de dados.', 'error');
@@ -147,47 +157,56 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderCatalog() {
         if (!isCatalogVisible) return;
 
-        // Filter movies by search query and selected genre
-        const filtered = movies.filter(movie => {
-            const matchesNameOrGenreSearch = searchQuery === '' || 
-                (movie.nome && movie.nome.toLowerCase().includes(searchQuery)) || 
-                (movie.genero && movie.genero.toLowerCase().includes(searchQuery));
+        // Filter countries by search query and selected continent
+        const filtered = countries.filter(country => {
+            const matchesTextSearch = searchQuery === '' || 
+                (country.nome && country.nome.toLowerCase().includes(searchQuery)) || 
+                (country.capital && country.capital.toLowerCase().includes(searchQuery)) ||
+                (country.continente && country.continente.toLowerCase().includes(searchQuery));
 
-            const matchesGenreDropdown = selectedGenreFilter === '' || 
-                movie.genero === selectedGenreFilter;
+            const matchesContinentDropdown = selectedContinentFilter === '' || 
+                country.continente === selectedContinentFilter;
 
-            return matchesNameOrGenreSearch && matchesGenreDropdown;
+            return matchesTextSearch && matchesContinentDropdown;
         });
 
-        movieCountBadge.textContent = filtered.length;
-        movieList.innerHTML = '';
+        countryCountBadge.textContent = filtered.length;
+        countryList.innerHTML = '';
 
         if (filtered.length === 0) {
             noResults.classList.remove('hidden');
-            if (movies.length === 0) {
-                noResultsText.textContent = 'Nenhum filme cadastrado no banco de dados ainda. Preencha o formulário acima para cadastrar!';
+            if (countries.length === 0) {
+                noResultsText.textContent = 'Nenhum país cadastrado no banco de dados ainda. Utilize o formulário acima para cadastrar!';
             } else {
-                noResultsText.textContent = 'Nenhum filme encontrado com os critérios de pesquisa informados.';
+                noResultsText.textContent = 'Nenhum país encontrado com os critérios de pesquisa informados.';
             }
         } else {
             noResults.classList.add('hidden');
-            filtered.forEach(movie => {
-                const card = createTextMovieCard(movie);
-                movieList.appendChild(card);
+            filtered.forEach(country => {
+                const card = createCountryCard(country);
+                countryList.appendChild(card);
             });
         }
     }
 
-    function createTextMovieCard(movie) {
+    function createCountryCard(country) {
         const card = document.createElement('div');
-        card.className = 'movie-text-card';
+        card.className = 'country-card';
 
         card.innerHTML = `
-            <div class="movie-info">
-                <h3 class="movie-info-title">${escapeHtml(movie.nome)}</h3>
-                <span class="movie-info-genre">${escapeHtml(movie.genero)}</span>
+            <div class="country-info">
+                <span class="continent-badge"><i class="fa-solid fa-compass"></i> ${escapeHtml(country.continente)}</span>
+                <h3 class="country-info-title">${escapeHtml(country.nome)}</h3>
+                <div class="country-details">
+                    <span class="country-detail-item">
+                        <i class="fa-solid fa-building-columns"></i> Capital: <strong>${escapeHtml(country.capital)}</strong>
+                    </span>
+                    <span class="country-detail-item">
+                        <i class="fa-solid fa-users"></i> Pop.: <strong>${escapeHtml(country.populacao)}</strong>
+                    </span>
+                </div>
             </div>
-            <button class="delete-btn" title="Remover filme do acervo" data-id="${movie.id}">
+            <button class="delete-btn" title="Remover país do acervo" data-id="${country.id}">
                 <i class="fa-solid fa-trash-can"></i>
             </button>
         `;
@@ -195,21 +214,21 @@ document.addEventListener('DOMContentLoaded', () => {
         const deleteBtn = card.querySelector('.delete-btn');
         deleteBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            deleteMovie(movie.id, movie.nome);
+            deleteCountry(country.id, country.nome);
         });
 
         return card;
     }
 
-    async function deleteMovie(id, nome) {
-        if (confirm(`Deseja remover "${nome}" do acervo?`)) {
+    async function deleteCountry(id, nome) {
+        if (confirm(`Deseja remover "${nome}" do acervo de países?`)) {
             try {
-                const response = await fetch(`/api/filmes/${id}`, { method: 'DELETE' });
+                const response = await fetch(`/api/paises/${id}`, { method: 'DELETE' });
                 if (response.ok) {
-                    await carregarFilmesDoBanco();
-                    showToast(`Filme "${nome}" removido do banco de dados.`);
+                    await carregarPaisesDoBanco();
+                    showToast(`País "${nome}" removido do banco de dados.`);
                 } else {
-                    showToast('Erro ao remover o filme do banco de dados.', 'error');
+                    showToast('Erro ao remover o país do banco de dados.', 'error');
                 }
             } catch (err) {
                 showToast('Falha na comunicação com o servidor/banco de dados.', 'error');
@@ -218,9 +237,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateBadgeCount() {
-        const count = movies.length;
-        if (movieCountBadge) movieCountBadge.textContent = count;
-        if (navMovieCountBadge) navMovieCountBadge.textContent = count;
+        const count = countries.length;
+        if (countryCountBadge) countryCountBadge.textContent = count;
+        if (navCountryCountBadge) navCountryCountBadge.textContent = count;
     }
 
     function showToast(message, type = 'success') {
@@ -232,7 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
             toast.style.borderLeftColor = '#ef4444';
         } else {
             icon.className = 'toast-icon fa-solid fa-circle-check';
-            toast.style.borderLeftColor = 'var(--gold-primary)';
+            toast.style.borderLeftColor = 'var(--emerald-primary)';
         }
 
         toast.classList.remove('hidden');
